@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from datetime import datetime
 import random
@@ -31,6 +31,11 @@ TRANSFER_INFO = {
 
 METODE_PEMBAYARAN = ["tunai", "qris", "transfer"]
 
+# Custom Filter untuk Format Rupiah
+@app.template_filter('rupiah')
+def rupiah_filter(value):
+    return f"Rp {value:,.0f}".replace(",", ".")
+
 @app.route("/")
 def login():
     return render_template("login.html")
@@ -44,10 +49,8 @@ def proses_login():
         session["user"] = username
         return redirect(url_for("dashboard"))
 
-    return render_template(
-        "login.html",
-        error="Username atau Password Salah"
-    )
+    flash("Username atau Password Salah", "danger")
+    return redirect(url_for("login"))
 
 @app.route("/dashboard")
 def dashboard():
@@ -93,12 +96,13 @@ def stok():
             jumlah = 0
 
         if barcode not in BARANG:
-            error = "Barcode barang tidak ditemukan!"
+            flash("Barcode barang tidak ditemukan!", "danger")
         elif jumlah <= 0:
-            error = "Jumlah stok harus lebih dari 0!"
+            flash("Jumlah stok harus lebih dari 0!", "warning")
         else:
             BARANG[barcode]["stok"] += jumlah
-            pesan = f"Stok {BARANG[barcode]['nama']} berhasil ditambah {jumlah}."
+            flash(f"Stok {BARANG[barcode]['nama']} berhasil ditambah {jumlah}.", "success")
+        return redirect(url_for("stok"))
 
     return render_template(
         "stok.html",
@@ -151,7 +155,7 @@ def transaksi():
             # Pastikan session dimodifikasi terlepas dari apakah barang baru atau sudah ada
             session.modified = True 
         else:
-            error = "Barang tidak ditemukan!"
+            flash("Barang tidak ditemukan!", "danger")
 
     total = sum(item["subtotal"] for item in session["keranjang"])
 
@@ -159,7 +163,6 @@ def transaksi():
         "transaksi.html",
         keranjang=session["keranjang"],
         total=total,
-        error=error,
         transfer_info=TRANSFER_INFO
     )
 
