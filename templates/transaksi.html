@@ -82,13 +82,13 @@
                     <td style="font-weight: 600;">{{item.nama}}</td>
                     <td>Rp {{item.harga_satuan}}</td>
                     <td>
-                        <div class="qty-controls">
-                            <a href="/kurang_qty/{{ loop.index0 }}" class="qty-btn">-</a>
-                            <span class="qty-number">{{item.qty}}</span>
-                            <a href="/tambah_qty/{{ loop.index0 }}" class="qty-btn">+</a>
+                        <div class="qty-controls" data-index="{{ loop.index0 }}">
+                            <button type="button" onclick="updateQty({{ loop.index0 }}, 'kurang')" class="qty-btn">-</button>
+                            <span class="qty-number" id="qty-{{ loop.index0 }}">{{item.qty}}</span>
+                            <button type="button" onclick="updateQty({{ loop.index0 }}, 'tambah')" class="qty-btn">+</button>
                         </div>
                     </td>
-                    <td style="font-weight: 700; color: #0f172a;">Rp {{item.subtotal}}</td>
+                    <td style="font-weight: 700; color: #0f172a;" id="subtotal-{{ loop.index0 }}">Rp {{item.subtotal}}</td>
                     <td>
                         <a href="/hapus_item/{{ loop.index0 }}" onclick="return confirm('Hapus barang ini dari keranjang?')" class="btn-danger-outline">🗑 Hapus</a>
                     </td>
@@ -104,7 +104,7 @@
         
         <div class="flex-between" style="margin-top: 25px; padding-top: 25px; border-top: 2px dashed #e2e8f0;">
             <a href="/batal_transaksi" class="btn-danger-outline" style="border: none; background: #fef2f2; padding: 10px 15px; font-weight: 600;" onclick="return confirm('Batalkan seluruh transaksi ini?')">❌ Kosongkan Keranjang</a>
-            <h2 class="total-text">Total: Rp {{total}}</h2>
+            <h2 class="total-text" id="total-keranjang">Total: Rp {{total}}</h2>
         </div>
     </div>
 
@@ -167,8 +167,30 @@
 </div>
 
 <script>
+function updateQty(index, aksi) {
+    const url = aksi === 'tambah' ? `/tambah_qty/${index}` : `/kurang_qty/${index}`;
+    
+    fetch(url, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Update angka di UI tanpa refresh
+        document.getElementById(`qty-${index}`).innerText = data.qty;
+        document.getElementById(`subtotal-${index}`).innerText = `Rp ${data.subtotal.toLocaleString('id-ID')}`;
+        document.getElementById(`total-keranjang`).innerText = `Total: Rp ${data.total.toLocaleString('id-ID')}`;
+        
+        // Update juga nilai total untuk validasi pembayaran
+        window.currentTotal = data.total;
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Inisialisasi total global
+window.currentTotal = {{ total }};
+
 function cekKeranjang() {
-    if ("{{total}}" == "0") {
+    if (window.currentTotal <= 0) {
         alert("Belum ada barang di keranjang! Silakan tambahkan barang terlebih dahulu.");
         return false;
             }

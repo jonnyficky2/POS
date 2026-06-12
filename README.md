@@ -38,7 +38,7 @@ Pastikan Anda sudah menginstal Python 3.x di komputer Anda.
 
 3. **Instal library yang dibutuhkan:**
    ```bash
-   pip install flask pandas openpyxl
+   python3 -m pip install flask pandas openpyxl
    ```
 
 4. **Inisialisasi Database:**

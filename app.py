@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, jsonify
 import sqlite3
 from datetime import datetime
 import random
@@ -408,9 +408,18 @@ def tambah_qty(index):
     if index < len(keranjang):
         keranjang[index]["qty"] += 1
         keranjang[index]["subtotal"] = keranjang[index]["qty"] * keranjang[index]["harga_satuan"]
+        
+        total_keranjang = sum(item["subtotal"] for item in keranjang)
 
     session["keranjang"] = keranjang
     session.modified = True
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({
+            "qty": keranjang[index]["qty"],
+            "subtotal": keranjang[index]["subtotal"],
+            "total": total_keranjang
+        })
 
     return redirect("/transaksi")
 
@@ -426,9 +435,18 @@ def kurang_qty(index):
         if keranjang[index]["qty"] > 1:
             keranjang[index]["qty"] -= 1
             keranjang[index]["subtotal"] = keranjang[index]["qty"] * keranjang[index]["harga_satuan"]
+            
+            total_keranjang = sum(item["subtotal"] for item in keranjang)
 
     session["keranjang"] = keranjang
     session.modified = True
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({
+            "qty": keranjang[index]["qty"],
+            "subtotal": keranjang[index]["subtotal"],
+            "total": total_keranjang
+        })
 
     return redirect("/transaksi")
 
