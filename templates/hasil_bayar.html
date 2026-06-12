@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Pembayaran</title>
+    <style>
+        .action-btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.2s;
+            width: auto;
+            background: #64748b;
+        }
+        .action-btn:hover { background: #475569; }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 16px;
+        }
+        .detail-row.bold {
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: none;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .thank-you {
+            text-align: center;
+            color: #0f172a;
+            font-weight: 700;
+            line-height: 1.5;
+            margin: 0 0 25px;
+        }
+        .thank-you span {
+            display: block;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" style="max-width: 500px;">
+{% if sukses %}
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <h1 class="success" style="margin-bottom: 10px; font-size: 28px;">✅ Berhasil</h1>
+            <p style="color: #64748b;">No Struk: <b style="color: #0f172a;">#{{ nomor_struk }}</b></p>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+            <div class="detail-row">
+                <span>Metode Pembayaran</span>
+                <span>{{ metode_pembayaran|upper }}</span>
+            </div>
+            <div class="detail-row">
+                <span>Total Belanja</span>
+                <span>Rp {{total}}</span>
+            </div>
+            {% if metode_pembayaran == "tunai" %}
+            <div class="detail-row">
+                <span>Tunai (Bayar)</span>
+                <span>Rp {{bayar}}</span>
+            </div>
+            <div class="detail-row bold">
+                <span>Kembalian</span>
+                <span style="color: #10b981;">Rp {{kembalian}}</span>
+            </div>
+            {% elif metode_pembayaran == "qris" %}
+            <div class="detail-row bold">
+                <span>Status</span>
+                <span style="color: #10b981;">Lunas QRIS</span>
+            </div>
+            {% elif metode_pembayaran == "transfer" %}
+            <div class="detail-row">
+                <span>No. Rekening</span>
+                <span>{{ transfer_info.norek }}</span>
+            </div>
+            <div class="detail-row">
+                <span>Nama Rekening</span>
+                <span>{{ transfer_info.nama }}</span>
+            </div>
+            <div class="detail-row bold">
+                <span>Status</span>
+                <span style="color: #10b981;">Lunas Transfer</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <p class="thank-you">
+            Terima kasih sudah berbelanja di Smart Warung
+            <span>Semoga harimu menyenangkan.</span>
+        </p>
+
+        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
+            <button class="action-btn" onclick="window.print()">🖨 Cetak Struk</button>
+        </div>
+
+        <a href="/transaksi" class="menu-btn" style="padding: 14px;">➕ Transaksi Baru</a>
+    </div>
+{% else %}
+    <div class="card" style="text-align: center;">
+        <h1 class="error" style="background: transparent; margin-bottom: 15px; font-size: 32px;">❌ Gagal</h1>
+        <p style="font-size: 16px; color: #475569; margin-bottom: 25px;">{{pesan}}</p>
+        <a href="/transaksi" class="menu-btn">⬅ Kembali ke Transaksi</a>
+    </div>
+{% endif %}
+
+    <p style="text-align:center; color: #94a3b8; font-size: 14px; margin-top: 30px;">
+        Smart Warung POS © 2026
+    </p>
+</div>
+
+</body>
+</html>

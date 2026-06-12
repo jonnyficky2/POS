@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+<div class="card" style="max-width: 400px; margin: 80px auto;">
+
+<div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="margin-bottom: 5px; color: #1e3a8a;">SMART WARUNG</h1>
+    <h3 style="color: #64748b; font-weight: 500;">Point of Sales System</h3>
+</div>
+
+{% if error %}
+<p class="error">{{error}}</p>
+{% endif %}
+
+<form action="/login" method="POST">
+
+<div style="margin-bottom: 20px;">
+    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Username</label>
+    <input type="text" name="username" placeholder="Masukkan username" required>
+</div>
+
+<div style="margin-bottom: 25px;">
+    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Password</label>
+    <input type="password" name="password" placeholder="Masukkan password" required>
+</div>
+
+<button type="submit" style="height: 50px; font-size: 16px;">
+Masuk ke Sistem
+</button>
+
+</form>
+
+</div>
+
+</div>
+<p style="text-align:center">
+Smart Warung POS © 2026
+</p>
+
+</body>
+
+</html>

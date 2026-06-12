@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laporan Penjualan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        .action-btn {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.2s;
+            width: auto;
+        }
+        .btn-danger { background: #ef4444; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: #64748b; }
+        .btn-secondary:hover { background: #475569; }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>SMART WARUNG POS</h1>
+        <h3>Laporan Penjualan</h3>
+    </div>
+
+    <div class="card">
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            {% if session.get('user') == 'owner' %}
+            <button class="action-btn btn-danger" onclick="if(confirm('Peringatan: Yakin ingin menghapus SEMUA riwayat laporan? Tindakan ini tidak bisa dibatalkan!')) window.location.href='/hapus_laporan'">🗑 Hapus Semua Laporan</button>
+            {% endif %}
+            <button class="action-btn btn-secondary" onclick="window.print()">🖨 Print Laporan</button>
+            <button class="action-btn btn-secondary" onclick="exportPDF()">📥 Export PDF</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Waktu</th>
+                    <th>Kasir</th>
+                    <th>Total Belanja</th>
+                    {% if session.get('user') == 'owner' %}
+                    <th style="text-align: center;">Aksi</th>
+                    {% endif %}
+                </tr>
+
+                {% for row in data %}
+                <tr>
+                    <td>#{{ row['id'] }}</td>
+                    <td>{{ row['tanggal'] }}</td>
+                    <td>{{ row['kasir'] | capitalize }}</td>
+                    <td style="font-weight: 600;">Rp {{ row['total'] }}</td>
+
+                    {% if session.get('user') == 'owner' %}
+                    <td style="text-align: center;">
+                        <a href="/hapus/{{ row['id'] }}" class="action-btn btn-danger" style="padding: 6px 12px; font-size: 13px;" onclick="return confirm('Hapus transaksi ini?')">🗑 Hapus</a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #94a3b8; padding: 30px;">Belum ada data transaksi.</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 2px dashed #e2e8f0; padding-top: 20px;">
+            <a href="/dashboard" class="action-btn btn-secondary">⬅ Kembali ke Dashboard</a>
+            <h2 class="total" style="margin: 0; color: #1e3a8a;">
+                Total Pendapatan: Rp {{ total_penjualan }}
+            </h2>
+        </div>
+    </div>
+
+    <p style="text-align:center; margin-top:40px; color: #94a3b8; font-size: 14px;">
+        Smart Warung POS © 2026
+    </p>
+</div>
+
+<script>
+function exportPDF() {
+    var element = document.body;
+    var opt = {
+        margin:       0.5,
+        filename:     'Laporan_Penjualan.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    
+    // Sembunyikan tombol saat diekspor
+    var buttons = document.querySelectorAll('button, .action-btn, a');
+    buttons.forEach(btn => btn.style.display = 'none');
+    
+    html2pdf().set(opt).from(element).save().then(() => {
+        buttons.forEach(btn => btn.style.display = ''); // Munculkan kembali
+    });
+}
+</script>
+</body>
+</html>

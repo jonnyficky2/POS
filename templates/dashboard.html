@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+    <h1>SMART WARUNG POS</h1>
+    <p>Sistem Penjualan Sederhana</p>
+</div>
+<p class="greeting">
+Selamat datang, {{ session['user'] | capitalize }}! 👋
+</p>
+<div class="stats">
+
+    <div class="stat-card">
+        <h3>Total Transaksi</h3>
+        <h1>{{ jumlah_transaksi }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Total Penjualan</h3>
+        <h1>Rp {{ total_penjualan }}</h1>
+    </div>
+
+</div>
+<div class="card">
+
+<h2 style="text-align: center; margin-bottom: 25px;">Menu Utama</h2>
+
+<div class="menu-grid">
+
+<a href="/transaksi" class="menu-btn">
+🛒 Transaksi Penjualan
+</a>
+
+<a href="/laporan" class="menu-btn">
+📊 Laporan Penjualan
+</a>
+
+<a href="/stok" class="menu-btn">
+📦 Stok Barang
+</a>
+
+<a href="/logout" class="menu-btn" style="background: #ef4444;">
+🚪 Logout
+</a>
+
+</div>
+
+</div>
+
+<p style="text-align:center; margin-top: 40px; color: #94a3b8; font-size: 14px;">
+Smart Warung POS © 2026
+</p>
+</body>
+</html>

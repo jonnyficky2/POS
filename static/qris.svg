@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" role="img" aria-labelledby="title desc">
+  <title id="title">Barcode QRIS Smart Warung</title>
+  <desc id="desc">Gambar QR untuk pembayaran QRIS Smart Warung</desc>
+  <rect width="240" height="240" fill="#fff"/>
+  <g fill="#0f172a">
+    <path d="M20 20h58v58H20zM162 20h58v58h-58zM20 162h58v58H20z"/>
+    <path fill="#fff" d="M32 32h34v34H32zM174 32h34v34h-34zM32 174h34v34H32z"/>
+    <path d="M42 42h14v14H42zM184 42h14v14h-14zM42 184h14v14H42z"/>
+    <path d="M94 20h14v14H94zM122 20h14v14h-14zM94 48h28v14H94zM136 48h14v14h-14zM108 76h42v14h-42z"/>
+    <path d="M90 104h14v14H90zM118 104h14v14h-14zM146 104h28v14h-28zM202 104h18v14h-18z"/>
+    <path d="M90 132h42v14H90zM160 132h14v14h-14zM188 132h32v14h-32z"/>
+    <path d="M104 160h14v14h-14zM132 160h42v14h-42zM202 160h18v14h-18z"/>
+    <path d="M90 188h28v14H90zM132 188h14v14h-14zM160 188h60v14h-60z"/>
+    <path d="M90 216h14v14H90zM118 216h42v14h-42zM188 216h14v14h-14zM216 216h14v14h-14z"/>
+    <path d="M20 92h28v14H20zM62 92h14v14H62zM188 90h14v28h-14zM216 76h14v28h-14z"/>
+    <path d="M48 118h28v14H48zM20 132h14v14H20zM62 146h28v14H62z"/>
+  </g>
+  <text x="120" y="124" font-family="Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#0f172a">QRIS</text>
+</svg>

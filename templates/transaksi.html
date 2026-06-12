@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transaksi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Modern UI Style */
+        .modern-container { max-width: 900px; margin: 30px auto; padding: 0 15px; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .modern-card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); padding: 25px; margin-bottom: 25px; border: 1px solid #f1f5f9; }
+        .modern-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .modern-table th { background: #f8fafc; color: #475569; padding: 12px 15px; text-align: left; font-size: 14px; border-bottom: 2px solid #e2e8f0; }
+        .modern-table td { padding: 15px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; color: #334155; }
+        .modern-table tr:hover { background-color: #f8fafc; }
+        .qty-controls { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .qty-btn { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: #f1f5f9; border-radius: 6px; text-decoration: none; color: #475569; font-weight: bold; transition: 0.2s; border: 1px solid #e2e8f0; }
+        .qty-btn:hover { background: #e2e8f0; color: #0f172a; }
+        .qty-number { font-weight: 600; min-width: 20px; text-align: center; font-size: 15px; }
+        .btn-modern { height: 45px; padding: 0 16px; box-sizing: border-box; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; border: none; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+        .btn-danger-outline { color: #ef4444; background: transparent; border: 1px solid #ef4444; padding: 6px 12px; border-radius: 6px; font-size: 13px; text-decoration: none; display: inline-block; transition: 0.2s; }
+        .btn-danger-outline:hover { background: #ef4444; color: white; }
+        .modern-input { height: 45px; padding: 0 15px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; transition: 0.2s; width: 100%; }
+        .modern-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        .total-text { font-size: 26px; color: #0f172a; font-weight: 800; margin: 0; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .alert-error { background: #fef2f2; color: #ef4444; padding: 12px 15px; border-radius: 8px; font-weight: 600; margin-bottom: 20px; border: 1px solid #fecaca; }
+        .payment-form { display: grid; gap: 14px; }
+        .payment-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+        .payment-option input { display: none; }
+        .payment-option span { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #475569; cursor: pointer; transition: 0.2s; background: #f8fafc; text-align: center; }
+        .payment-option input:checked + span { color: #1d4ed8; border-color: #3b82f6; background: #eff6ff; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12); }
+        .payment-detail { display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+        .payment-detail.active { display: block; }
+        .qris-box { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .qris-box img { width: 180px; height: 180px; object-fit: contain; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; }
+        .transfer-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+        .transfer-row:last-child { border-bottom: none; }
+        .transfer-row strong { color: #0f172a; text-align: right; }
+        @media (max-width: 640px) {
+            .payment-options { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="modern-container">
+
+    <!-- Bagian Input Barcode -->
+    <div class="modern-card">
+        <h2 style="margin-top: 0; margin-bottom: 20px; color: #0f172a;">🛒 Transaksi Penjualan</h2>
+        
+        {% if error %}
+        <div class="alert-error">❌ {{ error }}</div>
+        {% endif %}
+
+        <form method="POST" style="display: flex; gap: 12px;">
+            <input type="text" name="barcode" placeholder="Masukkan Barcode / Kode Barang" required autofocus class="modern-input" style="flex: 1;">
+            <button type="submit" class="btn-modern btn-primary" style="white-space: nowrap; width: auto; padding: 0 25px;">
+                + Tambah
+            </button>
+        </form>
+    </div>
+
+    <!-- Bagian Tabel Keranjang -->
+    <div class="modern-card">
+        <h3 style="margin-top: 0; color: #334155; margin-bottom: 15px;">Daftar Keranjang</h3>
+        
+        <div style="overflow-x: auto;">
+            <table class="modern-table">
+                <tr>
+                    <th style="width: 50px;">No</th>
+                    <th>Nama Barang</th>
+                    <th>Harga Satuan</th>
+                    <th style="text-align: center;">Qty</th>
+                    <th>Subtotal</th>
+                    <th>Aksi</th>
+                </tr>
+                {% for item in keranjang %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td style="font-weight: 600;">{{item.nama}}</td>
+                    <td>Rp {{item.harga_satuan}}</td>
+                    <td>
+                        <div class="qty-controls">
+                            <a href="/kurang_qty/{{ loop.index0 }}" class="qty-btn">-</a>
+                            <span class="qty-number">{{item.qty}}</span>
+                            <a href="/tambah_qty/{{ loop.index0 }}" class="qty-btn">+</a>
+                        </div>
+                    </td>
+                    <td style="font-weight: 700; color: #0f172a;">Rp {{item.subtotal}}</td>
+                    <td>
+                        <a href="/hapus_item/{{ loop.index0 }}" onclick="return confirm('Hapus barang ini dari keranjang?')" class="btn-danger-outline">🗑 Hapus</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not keranjang %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 30px; color: #94a3b8;">Keranjang belanja masih kosong.</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        
+        <div class="flex-between" style="margin-top: 25px; padding-top: 25px; border-top: 2px dashed #e2e8f0;">
+            <a href="/batal_transaksi" class="btn-danger-outline" style="border: none; background: #fef2f2; padding: 10px 15px; font-weight: 600;" onclick="return confirm('Batalkan seluruh transaksi ini?')">❌ Kosongkan Keranjang</a>
+            <h2 class="total-text">Total: Rp {{total}}</h2>
+        </div>
+    </div>
+
+    <!-- Bagian Pembayaran -->
+    <div class="modern-card flex-between">
+        <div style="flex: 1; max-width: 500px;">
+            <h3 style="margin-top: 0; color: #334155; margin-bottom: 15px;">Proses Pembayaran</h3>
+            <form action="/bayar" method="POST" onsubmit="return cekKeranjang()" class="payment-form">
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="metode_pembayaran" value="tunai" checked onchange="pilihMetodePembayaran()">
+                        <span>Tunai</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="metode_pembayaran" value="qris" onchange="pilihMetodePembayaran()">
+                        <span>QRIS</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="metode_pembayaran" value="transfer" onchange="pilihMetodePembayaran()">
+                        <span>Transfer</span>
+                    </label>
+                </div>
+
+                <div id="detail-tunai" class="payment-detail active">
+                    <input type="number" name="bayar" id="input-bayar" placeholder="Nominal Uang (Rp)" required class="modern-input" style="margin-bottom: 0;">
+                </div>
+
+                <div id="detail-qris" class="payment-detail">
+                    <div class="qris-box">
+                        <img src="{{ url_for('static', filename='qris.svg') }}" alt="Barcode QRIS">
+                        <strong>Scan QRIS untuk membayar Rp {{total}}</strong>
+                    </div>
+                </div>
+
+                <div id="detail-transfer" class="payment-detail">
+                    <div class="transfer-row">
+                        <span>Bank</span>
+                        <strong>{{ transfer_info.bank }}</strong>
+                    </div>
+                    <div class="transfer-row">
+                        <span>No. Rekening</span>
+                        <strong>{{ transfer_info.norek }}</strong>
+                    </div>
+                    <div class="transfer-row">
+                        <span>Nama Rekening</span>
+                        <strong>{{ transfer_info.nama }}</strong>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-modern btn-primary" style="white-space: nowrap; width: 100%; padding: 0 25px;">Bayar</button>
+            </form>
+        </div>
+        <a href="/dashboard" class="btn-modern" style="background: #f1f5f9; color: #475569;">⬅ Kembali ke Dashboard</a>
+    </div>
+
+    <p style="text-align:center; color: #94a3b8; font-size: 14px; margin-top: 30px;">
+        Smart Warung POS © 2026
+    </p>
+
+</div>
+
+<script>
+function cekKeranjang() {
+    if ("{{total}}" == "0") {
+        alert("Belum ada barang di keranjang! Silakan tambahkan barang terlebih dahulu.");
+        return false;
+            }
+        return true;
+            }
+
+function pilihMetodePembayaran() {
+    const metode = document.querySelector('input[name="metode_pembayaran"]:checked').value;
+    const inputBayar = document.getElementById("input-bayar");
+    document.querySelectorAll(".payment-detail").forEach(detail => {
+        detail.classList.remove("active");
+    });
+    document.getElementById("detail-" + metode).classList.add("active");
+    inputBayar.required = metode === "tunai";
+}
+</script>
+</body>
+</html>

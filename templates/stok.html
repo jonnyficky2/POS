@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stok Barang</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .stock-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .stock-metric {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 18px;
+        }
+        .stock-metric span {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .stock-metric strong {
+            display: block;
+            color: #111827;
+            font-size: 24px;
+            margin-top: 6px;
+        }
+        .stock-form {
+            display: grid;
+            grid-template-columns: 1fr 180px 160px;
+            gap: 12px;
+            align-items: start;
+        }
+        .stock-form input {
+            margin-bottom: 0;
+        }
+        .stock-low {
+            color: #ef4444;
+            font-weight: 800;
+        }
+        .stock-safe {
+            color: #10b981;
+            font-weight: 800;
+        }
+        .code-badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 28px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 800;
+        }
+        @media (max-width: 700px) {
+            .stock-summary,
+            .stock-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Stok Barang</h1>
+        <p>Kelola dan tambah stok barang</p>
+    </div>
+
+    <div class="stock-summary">
+        <div class="stock-metric">
+            <span>Total Produk</span>
+            <strong>{{ total_produk }}</strong>
+        </div>
+        <div class="stock-metric">
+            <span>Stok Menipis</span>
+            <strong>{{ stok_menipis }}</strong>
+        </div>
+        <div class="stock-metric">
+            <span>Total Unit</span>
+            <strong>{{ total_unit }}</strong>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="page-title">
+            <div>
+                <h2>Input Stok</h2>
+                <p class="muted">Masukkan barcode dan jumlah stok yang datang.</p>
+            </div>
+        </div>
+
+        {% if pesan %}
+        <div class="alert-success">{{ pesan }}</div>
+        {% endif %}
+
+        {% if error %}
+        <div class="alert-error">{{ error }}</div>
+        {% endif %}
+
+        <form action="/stok" method="POST" class="stock-form">
+            <input type="text" name="barcode" placeholder="Barcode Barang" required>
+            <input type="number" name="jumlah" placeholder="Jumlah Stok" min="1" required>
+            <button type="submit">Tambah Stok</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="page-title">
+            <div>
+                <h2>Daftar Stok</h2>
+                <p class="muted">Pantau sisa stok setiap produk.</p>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>Barcode</th>
+                    <th>Nama Barang</th>
+                    <th>Harga</th>
+                    <th style="text-align: center;">Sisa Stok</th>
+                </tr>
+                {% for barcode, detail in barang.items() %}
+                <tr>
+                    <td><span class="code-badge">{{ barcode }}</span></td>
+                    <td>{{ detail.nama }}</td>
+                    <td>Rp {{ detail.harga }}</td>
+                    <td style="text-align: center;" class="{% if detail.stok > 10 %}stock-safe{% else %}stock-low{% endif %}">
+                        {{ detail.stok }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <a href="/dashboard" class="back">Kembali ke Dashboard</a>
+
+    <p class="footer">
+        Smart Warung POS © 2026
+    </p>
+</div>
+
+</body>
+</html>
