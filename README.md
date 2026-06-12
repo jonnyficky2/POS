@@ -6,17 +6,17 @@
 
 | Halaman Login | Dashboard Utama |
 | :---: | :---: |
-| ![Login](screenshots/login.png) | ![Dashboard](screenshots/dashboard.png) |
+| ![Login](screenshot/login.png) | ![Dashboard](screenshot/dashboard.png) |
 
 | Transaksi Penjualan | Manajemen Stok |
 | :---: | :---: |
-| ![Transaksi](screenshots/transaksi.png) | ![Stok](screenshots/stok.png) |
+| ![Transaksi](screenshot/transaksi.png) | ![Stok](screenshot/stok.png) |
 
 | Laporan & Filter | Struk Pembayaran |
 | :---: | :---: |
-| ![Laporan](screenshots/laporan.png) | ![Hasil Bayar](screenshots/hasil_bayar.png) |
+| ![Laporan](screenshot/laporan.png) | ![Hasil Bayar](screenshot/hasil_bayar.png) |
 
-## � Fitur Utama
+## 🚀 Fitur Utama
 
 - **Manajemen Transaksi**: Sistem keranjang belanja dengan dukungan input barcode.
 - **Multi-Metode Pembayaran**: Mendukung pembayaran Tunai, QRIS, dan Transfer Bank.
@@ -80,7 +80,7 @@ Buka browser dan akses `http://127.0.0.1:5000`.
 ```text
 POS/
 ├── static/              # File statis (CSS, Images, SVG)
-├── screenshots/         # Screenshot aplikasi untuk dokumentasi
+├── screenshot/          # Screenshot aplikasi untuk dokumentasi
 ├── templates/           # Template HTML (Jinja2)
 │   ├── login.html
 │   ├── dashboard.html
