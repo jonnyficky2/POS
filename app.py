@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
 import sqlite3
 from datetime import datetime
 import random
+import io
+import pandas as pd
 app = Flask(__name__)
 app.secret_key = "smartwarung"
 
@@ -286,6 +288,36 @@ def laporan():
         data=data,
         total_penjualan=total_penjualan
     )
+
+@app.route("/ekspor_laporan")
+def ekspor_laporan():
+    if "user" not in session:
+        return redirect("/")
+
+    try:
+        conn = sqlite3.connect("database.db")
+        # Membaca data dari tabel transaksi langsung ke DataFrame Pandas
+        df = pd.read_sql_query("SELECT id, tanggal, kasir, total FROM transaksi", conn)
+        conn.close()
+
+        # Membuat buffer memori agar tidak perlu menyimpan file fisik di server
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Laporan Transaksi')
+        
+        output.seek(0)
+        
+        filename = f"Laporan_Transaksi_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        
+        return send_file(
+            output,
+            as_attachment=True,
+            download_name=filename,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    except Exception as e:
+        flash(f"Gagal mengekspor data: {str(e)}", "danger")
+        return redirect(url_for("laporan"))
 
 @app.route("/hapus/<int:id>")
 def hapus(id):
