@@ -2,7 +2,21 @@
 
 **Smart Warung POS** adalah aplikasi Kasir (Point of Sale) berbasis web yang ringan, dibangun menggunakan **Flask** dan **SQLite**. Aplikasi ini dirancang untuk memudahkan manajemen transaksi, pemantauan stok barang, dan pelaporan keuangan sederhana bagi UMKM atau warung.
 
-## 🚀 Fitur Utama
+## 📸 Preview Aplikasi
+
+| Halaman Login | Dashboard Utama |
+| :---: | :---: |
+| ![Login](screenshots/login.png) | ![Dashboard](screenshots/dashboard.png) |
+
+| Transaksi Penjualan | Manajemen Stok |
+| :---: | :---: |
+| ![Transaksi](screenshots/transaksi.png) | ![Stok](screenshots/stok.png) |
+
+| Laporan & Filter | Struk Pembayaran |
+| :---: | :---: |
+| ![Laporan](screenshots/laporan.png) | ![Hasil Bayar](screenshots/hasil_bayar.png) |
+
+## � Fitur Utama
 
 - **Manajemen Transaksi**: Sistem keranjang belanja dengan dukungan input barcode.
 - **Multi-Metode Pembayaran**: Mendukung pembayaran Tunai, QRIS, dan Transfer Bank.
@@ -66,6 +80,7 @@ Buka browser dan akses `http://127.0.0.1:5000`.
 ```text
 POS/
 ├── static/              # File statis (CSS, Images, SVG)
+├── screenshots/         # Screenshot aplikasi untuk dokumentasi
 ├── templates/           # Template HTML (Jinja2)
 │   ├── login.html
 │   ├── dashboard.html
