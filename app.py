@@ -262,18 +262,28 @@ def laporan():
     if "user" not in session:
         return redirect("/")
 
+    tgl_awal = request.args.get('tgl_awal', '')
+    tgl_akhir = request.args.get('tgl_akhir', '')
+
     conn = sqlite3.connect("database.db")
     conn.row_factory = sqlite3.Row
-
     cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT * FROM transaksi"
-    )
+    query = "SELECT * FROM transaksi"
+    params = []
+    if tgl_awal and tgl_akhir:
+        # Konversi format DD-MM-YYYY ke YYYY-MM-DD untuk perbandingan SQL
+        query += " WHERE substr(tanggal, 7, 4) || '-' || substr(tanggal, 4, 2) || '-' || substr(tanggal, 1, 2) BETWEEN ? AND ?"
+        params = [tgl_awal, tgl_akhir]
 
+    cursor.execute(query, params)
     data = cursor.fetchall()
 
-    cursor.execute("SELECT SUM(total) FROM transaksi")
+    sum_query = "SELECT SUM(total) FROM transaksi"
+    if tgl_awal and tgl_akhir:
+        sum_query += " WHERE substr(tanggal, 7, 4) || '-' || substr(tanggal, 4, 2) || '-' || substr(tanggal, 1, 2) BETWEEN ? AND ?"
+    
+    cursor.execute(sum_query, params)
     total_penjualan = cursor.fetchone()[0]
 
     if total_penjualan is None:
@@ -286,7 +296,9 @@ def laporan():
     return render_template(
         "laporan.html",
         data=data,
-        total_penjualan=total_penjualan
+        total_penjualan=total_penjualan,
+        tgl_awal=tgl_awal,
+        tgl_akhir=tgl_akhir
     )
 
 @app.route("/ekspor_laporan")
@@ -294,10 +306,19 @@ def ekspor_laporan():
     if "user" not in session:
         return redirect("/")
 
+    tgl_awal = request.args.get('tgl_awal', '')
+    tgl_akhir = request.args.get('tgl_akhir', '')
+
     try:
         conn = sqlite3.connect("database.db")
-        # Membaca data dari tabel transaksi langsung ke DataFrame Pandas
-        df = pd.read_sql_query("SELECT id, tanggal, kasir, total FROM transaksi", conn)
+        query = "SELECT id, tanggal, kasir, total FROM transaksi"
+        params = []
+        
+        if tgl_awal and tgl_akhir:
+            query += " WHERE substr(tanggal, 7, 4) || '-' || substr(tanggal, 4, 2) || '-' || substr(tanggal, 1, 2) BETWEEN ? AND ?"
+            params = [tgl_awal, tgl_akhir]
+
+        df = pd.read_sql_query(query, conn, params=params)
         conn.close()
 
         # Membuat buffer memori agar tidak perlu menyimpan file fisik di server
