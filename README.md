@@ -10,7 +10,7 @@
 
 | Transaksi Penjualan | Manajemen Stok |
 | :---: | :---: |
-| ![Transaksi](./screenshots/Transaksi.png) | ![Stok](./screenshot/Stok.png) |
+| ![Transaksi](./screenshots/Transaksi.png) | ![Stok](./screenshots/Stok.png) |
 
 | Laporan & Filter | Struk Pembayaran |
 | :---: | :---: |
