@@ -6,15 +6,15 @@
 
 | Halaman Login | Dashboard Utama |
 | :---: | :---: |
-| ![Login](screenshot/login.png) | ![Dashboard](screenshot/dashboard.png) |
+| ![Login](./screenshot/login.png) | ![Dashboard](./screenshot/dashboard.png) |
 
 | Transaksi Penjualan | Manajemen Stok |
 | :---: | :---: |
-| ![Transaksi](screenshot/transaksi.png) | ![Stok](screenshot/stok.png) |
+| ![Transaksi](./screenshot/transaksi.png) | ![Stok](./screenshot/stok.png) |
 
 | Laporan & Filter | Struk Pembayaran |
 | :---: | :---: |
-| ![Laporan](screenshot/laporan.png) | ![Hasil Bayar](screenshot/hasil_bayar.png) |
+| ![Laporan](./screenshot/laporan.png) | ![Hasil Bayar](./screenshot/hasil_bayar.png) |
 
 ## 🚀 Fitur Utama
 
@@ -91,7 +91,7 @@ POS/
 ├── app.py               # Logika utama aplikasi (Routes & Controller)
 ├── init_db.py           # Script inisialisasi database SQLite
 ├── database.db          # Database SQLite (dibuat otomatis)
-└── readme.md            # Dokumentasi proyek
+└── README.md            # Dokumentasi proyek
 ```
 
 ## 📝 Catatan Pengembangan
