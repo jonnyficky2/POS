@@ -6,15 +6,15 @@
 
 | Halaman Login | Dashboard Utama |
 | :---: | :---: |
-| ![Login](./screenshot/Login.png) | ![Dashboard](./screenshot/Dashboard.png) |
+| ![Login](./screenshots/Login.png) | ![Dashboard](./screenshots/Dashboard.png) |
 
 | Transaksi Penjualan | Manajemen Stok |
 | :---: | :---: |
-| ![Transaksi](./screenshot/Transaksi.png) | ![Stok](./screenshot/Stok.png) |
+| ![Transaksi](./screenshots/Transaksi.png) | ![Stok](./screenshot/Stok.png) |
 
 | Laporan & Filter | Struk Pembayaran |
 | :---: | :---: |
-| ![Laporan](./screenshot/Laporan.png) | ![Hasil Bayar](./screenshot/hasil_bayar.png) |
+| ![Laporan](./screenshots/Laporan.png) | ![Hasil Bayar](./screenshots/hasil_bayar.png) |
 
 ## 🚀 Fitur Utama
 
