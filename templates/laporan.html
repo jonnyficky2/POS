@@ -21,6 +21,13 @@
         .btn-danger:hover { background: #dc2626; }
         .btn-secondary { background: #64748b; }
         .btn-secondary:hover { background: #475569; }
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        @media print {
+            .filter-card {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -30,12 +37,49 @@
     <div class="header">
         <h1>SMART WARUNG POS</h1>
         <h3>Laporan Penjualan</h3>
+        {% if tgl_awal and tgl_akhir %}
+        <p style="color: var(--muted); margin-top: 6px; font-size: 14px; font-weight: 600;">
+            Periode: <span style="color: var(--primary);">{{ tgl_awal.split('-')|reverse|join('-') }}</span> s/d <span style="color: var(--primary);">{{ tgl_akhir.split('-')|reverse|join('-') }}</span>
+        </p>
+        {% endif %}
     </div>
+
+    {% if session.get('user') == 'owner' %}
+    <div class="filter-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow); transition: all 0.3s ease;">
+        <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 15px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+            Pilih Periode Laporan
+        </h3>
+        <form method="GET" action="/laporan" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+            <div style="flex: 1; min-width: 180px;">
+                <label for="tgl_awal" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Tanggal Awal</label>
+                <input type="date" id="tgl_awal" name="tgl_awal" value="{{ tgl_awal }}" required style="width: 100%; min-height: 40px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; margin-bottom: 0; transition: all 0.2s;">
+            </div>
+            <div style="flex: 1; min-width: 180px;">
+                <label for="tgl_akhir" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Tanggal Akhir</label>
+                <input type="date" id="tgl_akhir" name="tgl_akhir" value="{{ tgl_akhir }}" required style="width: 100%; min-height: 40px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; margin-bottom: 0; transition: all 0.2s;">
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button type="submit" class="action-btn" style="min-height: 40px; padding: 0 18px; font-size: 14px; background: var(--primary); display: flex; align-items: center; gap: 6px; width: auto;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-filter"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    Filter
+                </button>
+                {% if tgl_awal or tgl_akhir %}
+                <a href="/laporan" class="action-btn btn-secondary" style="min-height: 40px; padding: 0 16px; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--muted); line-height: 40px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    Reset
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    {% endif %}
 
     <div class="card">
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
             {% if session.get('user') == 'owner' %}
             <button class="action-btn btn-danger" onclick="if(confirm('Peringatan: Yakin ingin menghapus SEMUA riwayat laporan? Tindakan ini tidak bisa dibatalkan!')) window.location.href='/hapus_laporan'">🗑 Hapus Semua Laporan</button>
+            <a class="action-btn btn-success" href="/ekspor_laporan?tgl_awal={{ tgl_awal }}&tgl_akhir={{ tgl_akhir }}" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; line-height: 24px; font-size: 15px; font-weight: 700; color: white;">🟢 Ekspor Excel</a>
             {% endif %}
             <button class="action-btn btn-secondary" onclick="window.print()">🖨 Print Laporan</button>
             <button class="action-btn btn-secondary" onclick="exportPDF()">📥 Export PDF</button>
@@ -98,12 +142,12 @@ function exportPDF() {
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
     
-    // Sembunyikan tombol saat diekspor
-    var buttons = document.querySelectorAll('button, .action-btn, a');
-    buttons.forEach(btn => btn.style.display = 'none');
+    // Sembunyikan tombol dan form filter saat diekspor
+    var hideElements = document.querySelectorAll('button, .action-btn, a, .filter-card');
+    hideElements.forEach(el => el.style.display = 'none');
     
     html2pdf().set(opt).from(element).save().then(() => {
-        buttons.forEach(btn => btn.style.display = ''); // Munculkan kembali
+        hideElements.forEach(el => el.style.display = ''); // Munculkan kembali
     });
 }
 </script>
