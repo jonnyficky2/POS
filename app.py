@@ -3,7 +3,8 @@ import sqlite3
 from datetime import datetime
 import random
 import io
-import pandas as pd
+import io
+from openpyxl import Workbook
 app = Flask(__name__)
 app.secret_key = "smartwarung"
 
@@ -320,6 +321,7 @@ def ekspor_laporan():
 
     try:
         conn = sqlite3.connect("database.db")
+        conn.row_factory = sqlite3.Row
         query = "SELECT id, tanggal, kasir, total FROM transaksi"
         params = []
         
@@ -327,14 +329,25 @@ def ekspor_laporan():
             query += " WHERE substr(tanggal, 7, 4) || '-' || substr(tanggal, 4, 2) || '-' || substr(tanggal, 1, 2) BETWEEN ? AND ?"
             params = [tgl_awal, tgl_akhir]
 
-        df = pd.read_sql_query(query, conn, params=params)
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
         conn.close()
 
-        # Membuat buffer memori agar tidak perlu menyimpan file fisik di server
+        # Membuat buffer memori dan workbook excel
         output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            df.to_excel(writer, index=False, sheet_name='Laporan Transaksi')
+        wb = Workbook()
+        ws = wb.active
+        ws.title = 'Laporan Transaksi'
         
+        # Tambahkan Header
+        ws.append(['ID', 'Tanggal', 'Kasir', 'Total'])
+        
+        # Tambahkan Data
+        for row in rows:
+            ws.append([row['id'], row['tanggal'], row['kasir'], row['total']])
+            
+        wb.save(output)
         output.seek(0)
         
         filename = f"Laporan_Transaksi_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
