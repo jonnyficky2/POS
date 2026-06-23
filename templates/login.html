@@ -16,9 +16,13 @@ href="{{ url_for('static', filename='style.css') }}">
     <h3 style="color: #64748b; font-weight: 500;">Point of Sales System</h3>
 </div>
 
-{% if error %}
-<p class="error">{{error}}</p>
-{% endif %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert-error" style="text-align: center;">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
 <form action="/login" method="POST">
 
