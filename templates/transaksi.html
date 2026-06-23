@@ -134,8 +134,8 @@
 
                 <div id="detail-qris" class="payment-detail">
                     <div class="qris-box">
-                        <img src="{{ url_for('static', filename='qris.svg') }}" alt="Barcode QRIS">
-                        <strong>Scan QRIS untuk membayar Rp {{total}}</strong>
+                        <img id="qris-image" src="" alt="Barcode QRIS">
+                        <strong id="qris-total-text">Scan QRIS untuk membayar</strong>
                     </div>
                 </div>
 
@@ -193,9 +193,9 @@ function cekKeranjang() {
     if (window.currentTotal <= 0) {
         alert("Belum ada barang di keranjang! Silakan tambahkan barang terlebih dahulu.");
         return false;
-            }
-        return true;
-            }
+    }
+    return true;
+}
 
 function pilihMetodePembayaran() {
     const metode = document.querySelector('input[name="metode_pembayaran"]:checked').value;
@@ -205,6 +205,24 @@ function pilihMetodePembayaran() {
     });
     document.getElementById("detail-" + metode).classList.add("active");
     inputBayar.required = metode === "tunai";
+
+    if (metode === 'qris') {
+        fetch("{{ url_for('get_qris') }}")
+            .then(response => response.json())
+            .then(data => {
+                if (data.qris_image_url) {
+                    document.getElementById('qris-image').src = data.qris_image_url;
+                    const totalText = document.getElementById('qris-total-text');
+                    // Ambil nilai total dari variabel global JS
+                    const formattedTotal = window.currentTotal.toLocaleString('id-ID');
+                    totalText.innerText = `Scan QRIS untuk membayar Rp ${formattedTotal}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching QRIS data:', error);
+                document.getElementById('qris-total-text').innerText = 'Gagal memuat QRIS.';
+            });
+    }
 }
 </script>
 </body>

@@ -168,6 +168,15 @@ def transaksi():
         transfer_info=TRANSFER_INFO
     )
 
+@app.route("/get_qris")
+def get_qris():
+    if "user" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    return jsonify({
+        "qris_image_url": url_for('static', filename='qris.svg'),
+        "transfer_info": TRANSFER_INFO
+    })
+
 @app.route("/bayar", methods=["POST"])
 def bayar():
 
