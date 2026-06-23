@@ -2,6 +2,9 @@
 
 **Smart Warung POS** adalah aplikasi Kasir (Point of Sale) berbasis web yang ringan, dibangun menggunakan **Flask** dan **SQLite**. Aplikasi ini dirancang untuk memudahkan manajemen transaksi, pemantauan stok barang, dan pelaporan keuangan sederhana bagi UMKM atau warung.
 
+## 📖 Latar Belakang & Skenario
+
+Warung ini menjual kebutuhan sehari-hari seperti makanan ringan, minuman, hingga alat mandi dan cuci piring. Keunikannya terletak pada sistem kasir yang sudah menggunakan pemindaian barcode dan mendukung berbagai metode pembayaran non-tunai. Sistem ini dirancang untuk mempermudah transaksi dan pengelolaan stok. Skenarionya dimulai ketika barang datang; admin akan menginput data barang ke sistem. Saat pelanggan berbelanja, kasir tidak lagi mencari harga secara manual, melainkan cukup melakukan scanning barcode pada produk. Sistem akan otomatis menjumlahkan total belanja. Pada tahap pembayaran, pelanggan diberikan fleksibilitas untuk membayar secara tunai, melalui QRIS, maupun transfer bank. Setelah status pembayaran dikonfirmasi (baik lewat input nominal tunai atau verifikasi mutasi), sistem akan mencetak struk sebagai bukti belanja dan secara otomatis memotong jumlah stok di database secara real-time.
 ## 📸 Preview Aplikasi
 
 | Halaman Login | Dashboard Utama |
